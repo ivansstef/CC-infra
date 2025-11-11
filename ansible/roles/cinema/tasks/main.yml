@@ -66,6 +66,16 @@
   tags: [deploy, config]
 
 # Крок 5: Запуск додатку
+- name: Зупинка старого контейнера cinemaclub (якщо є)
+  command: docker stop cinemaclub
+  ignore_errors: yes
+  tags: [deploy]
+
+- name: Видалення старого контейнера cinemaclub (якщо є)
+  command: docker rm cinemaclub
+  ignore_errors: yes
+  tags: [deploy]
+
 - name: Зупинка існуючих контейнерів (якщо є)
   command: docker-compose down
   args:
