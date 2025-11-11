@@ -57,6 +57,14 @@
     force: yes
   tags: [deploy]
 
+- name: Оновлення CinemaClub репозиторію (git pull)
+  git:
+    repo: "{{ repo_url }}"
+    dest: "{{ app_dir }}"
+    version: main
+    update: yes
+  tags: [deploy, update]
+
 # Крок 4: Налаштування Docker Compose
 - name: Копіювання шаблону docker-compose.yml
   template:

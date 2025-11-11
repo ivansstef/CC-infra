@@ -11,6 +11,8 @@ on:
     paths:
       - 'ansible/**'
       - '.github/workflows/deploy_infra.yml'
+  repository_dispatch:  # Webhook від CinemaClub
+    types: [update-cinema]
   workflow_dispatch:  # Ручний запуск
     inputs:
       environment:

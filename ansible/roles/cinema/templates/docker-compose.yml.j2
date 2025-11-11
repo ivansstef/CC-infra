@@ -7,6 +7,8 @@ services:
     ports:
       - "{{ app_port }}:80"
     restart: unless-stopped
+    volumes:
+      - {{ app_dir }}:/usr/share/nginx/html:ro
     networks:
       - cinema-network
 
