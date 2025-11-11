@@ -7,9 +7,6 @@ services:
     ports:
       - "{{ app_port }}:80"
     restart: unless-stopped
-    volumes:
-      - ./:/app
-    restart: unless-stopped
     networks:
       - cinema-network
 
