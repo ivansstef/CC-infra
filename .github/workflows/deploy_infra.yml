@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - main
+      - feature/github-actions-cicd  # Для тестування
     paths:
       - 'ansible/**'
       - '.github/workflows/deploy_infra.yml'
