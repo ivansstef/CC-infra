@@ -1,0 +1,15 @@
+---
+# Playbook для розгортання Cinema Club
+- name: Deploy Cinema Club Application
+  hosts: cinema
+  become: yes
+  
+  vars:
+    # Змінні проекту
+    app_name: cinema-club
+    app_port: 8080
+    repo_url: https://github.com/ivansstef/CinemaClub.git
+    app_dir: /opt/cinema-club
+    
+  roles:
+    - cinema

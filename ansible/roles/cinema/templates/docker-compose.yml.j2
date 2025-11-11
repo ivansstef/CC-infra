@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  cinema-club:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: {{ app_name }}
+    ports:
+      - "{{ app_port }}:{{ app_port }}"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
+      - PORT={{ app_port }}
+    volumes:
+      - ./:/app
+    restart: unless-stopped
+    networks:
+      - cinema-network
+
+networks:
+  cinema-network:
+    driver: bridge
