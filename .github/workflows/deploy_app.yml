@@ -71,7 +71,19 @@ jobs:
           script: |
             cd /opt/cinema-club
             docker-compose ps
-            curl -f http://localhost:8080 || exit 1
+            
+            # Wait for application to start (max 60 seconds)
+            for i in {1..12}; do
+              if curl -f http://localhost:8080 > /dev/null 2>&1; then
+                echo "✅ Application is responding!"
+                exit 0
+              fi
+              echo "⏳ Waiting for application... (attempt $i/12)"
+              sleep 5
+            done
+            
+            echo "❌ Application failed to start"
+            exit 1
       
       - name: Deployment successful
         run: |
