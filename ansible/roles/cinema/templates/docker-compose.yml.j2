@@ -7,11 +7,8 @@ services:
       dockerfile: Dockerfile
     container_name: {{ app_name }}
     ports:
-      - "{{ app_port }}:{{ app_port }}"
-    environment:
-      - FLASK_APP=app.py
-      - FLASK_ENV=production
-      - PORT={{ app_port }}
+      - "{{ app_port }}:80"
+    restart: unless-stopped
     volumes:
       - ./:/app
     restart: unless-stopped
