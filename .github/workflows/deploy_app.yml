@@ -16,9 +16,9 @@ on:
         options:
           - production
           - staging
-  push:
-    branches:
-      - feature/github-actions-cicd  # Для тестування
+  # push:
+  #   branches:
+  #     - feature/github-actions-cicd  # Вимкнено: використовуємо volumes + git pull
 
 jobs:
   build-and-deploy:
