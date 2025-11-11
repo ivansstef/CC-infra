@@ -58,7 +58,7 @@ jobs:
       - name: Test SSH connection
         run: |
           cd ansible
-          ansible -i inventory_dynamic.ini cinema -m ping
+          ansible -i inventory_dynamic.ini cinema -m ping -e ansible_become=no
       
       - name: Run Ansible Playbook
         run: |
