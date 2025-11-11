@@ -1,0 +1,57 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.pkl
+*.egg
+*.egg-info/
+.eggs/
+dist/
+build/
+pip-wheel-metadata/
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+
+# Jupyter / IPython
+.ipynb_checkpoints/
+
+# === Ansible ===
+*.retry
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+ansible.cfg
+*.vault_pass.txt
+
+# === Docker ===
+*.pid
+*.tar
+*.bak
+*.tmp
+*.log
+docker-compose.override.yml
+.env
+
+# === System ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === VSCode / Editors ===
+.vscode/
+.idea/
+*.code-workspace
+
+# === GitHub Actions caches ===
+*.crash
+.cache/
+.github/workflows/*.lock
