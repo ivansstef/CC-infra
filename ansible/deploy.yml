@@ -1,5 +1,6 @@
 ---
 # Playbook для розгортання Cinema Club
+# Last updated: 2025-11-12
 - name: Deploy Cinema Club Application
   hosts: cinema
   become: yes
@@ -13,4 +14,3 @@
     
   roles:
     - cinema
-# Test comment
