@@ -55,3 +55,7 @@ desktop.ini
 *.crash
 .cache/
 .github/workflows/*.lock
+
+# === Documentation (except README) ===
+*.md
+!README.md
