@@ -46,7 +46,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/cinema-club:latest,${{ secrets.DOCKER_USERNAME }}/cinema-club:${{ github.sha }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/cinemaclub:latest,${{ secrets.DOCKER_USERNAME }}/cinemaclub:${{ github.sha }}
       
       - name: Deploy to server via SSH
         uses: appleboy/ssh-action@master
@@ -89,4 +89,4 @@ jobs:
         run: |
           echo "✅ Cinema Club deployed successfully!"
           echo "🌐 Application available at: http://${{ secrets.SERVER_IP }}:8080"
-          echo "🐳 Docker image: ${{ secrets.DOCKER_USERNAME }}/cinema-club:${{ github.sha }}"
+          echo "🐳 Docker image: ${{ secrets.DOCKER_USERNAME }}/cinemaclub:${{ github.sha }}"
