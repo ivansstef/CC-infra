@@ -53,6 +53,8 @@ jobs:
         with:
           context: .
           push: true
+          build-args: |
+            VERSION=${{ steps.version.outputs.VERSION }}
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/cinemaclub:latest
             ${{ secrets.DOCKER_USERNAME }}/cinemaclub:${{ steps.version.outputs.VERSION }}
