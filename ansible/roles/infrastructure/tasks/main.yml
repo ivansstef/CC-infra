@@ -1,0 +1,55 @@
+---
+# Infrastructure Role - System Setup and Configuration
+# Відповідає тільки за базову інфраструктуру сервера
+
+- name: Gather facts without become
+  setup:
+  become: no
+  tags: [always]
+
+# Крок 1: Оновлення системи
+- name: Оновлення кешу пакетів apt
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  tags: [system]
+
+- name: Оновлення всіх пакетів
+  apt:
+    upgrade: dist
+  tags: [system]
+
+# Крок 2: Встановлення залежностей
+- name: Встановлення необхідних пакетів
+  apt:
+    name:
+      - git
+      - python3
+      - python3-pip
+      - docker.io
+      - docker-compose
+      - curl
+      - ca-certificates
+    state: present
+  tags: [dependencies]
+
+- name: Додавання користувача до групи docker
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+  tags: [dependencies]
+
+- name: Створення директорії для додатків
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  tags: [directories]
+
+- name: Інфраструктура успішно налаштована
+  debug:
+    msg: "✅ Infrastructure setup completed successfully!"
+  tags: [always]

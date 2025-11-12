@@ -62,14 +62,15 @@ jobs:
           cd ansible
           ansible -i inventory_dynamic.ini cinema -m ping -e ansible_become=no
       
-      - name: Run Ansible Playbook
+      - name: Run Ansible Playbook (Infrastructure Only)
         run: |
           cd ansible
-          ansible-playbook -i inventory_dynamic.ini deploy.yml --become
+          ansible-playbook -i inventory_dynamic.ini deploy_infrastructure.yml --become
         env:
           ANSIBLE_HOST_KEY_CHECKING: false
       
       - name: Deployment successful
         run: |
-          echo "✅ Infrastructure deployed successfully!"
-          echo "🌐 Application should be available at: http://${{ secrets.SERVER_IP }}:8080"
+          echo "✅ Infrastructure setup completed successfully!"
+          echo "�️ System packages updated, Docker installed, directories created"
+          echo "⚠️ Application NOT deployed - use Deploy Application workflow for that"

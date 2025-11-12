@@ -1,0 +1,65 @@
+---
+# Application Role - Cinema Club Deployment
+# Відповідає тільки за деплой та запуск додатку
+
+- name: Gather facts without become
+  setup:
+  become: no
+  tags: [always]
+
+# Крок 1: Налаштування Docker Compose
+- name: Копіювання шаблону docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ app_dir }}/docker-compose.yml"
+    mode: '0644'
+  tags: [deploy, config]
+
+# Крок 2: Зупинка старих контейнерів
+- name: Зупинка існуючих контейнерів Cinema Club
+  command: docker-compose down
+  args:
+    chdir: "{{ app_dir }}"
+  ignore_errors: yes
+  tags: [deploy]
+
+# Крок 3: Завантаження нового образу
+- name: Pull latest Docker image
+  command: docker-compose pull
+  args:
+    chdir: "{{ app_dir }}"
+  tags: [deploy]
+
+# Крок 4: Запуск нового контейнера
+- name: Запуск Cinema Club через Docker Compose
+  command: docker-compose up -d --force-recreate
+  args:
+    chdir: "{{ app_dir }}"
+  tags: [deploy]
+
+# Крок 5: Очистка старих образів (залишити 3 останні версії)
+- name: Отримати список Cinema Club образів
+  shell: docker images ivansstef/cinemaclub --format "{{ '{{' }}.Repository{{ '}}' }}:{{ '{{' }}.Tag{{ '}}' }}" | grep -v "latest" | tail -n +4
+  register: old_images
+  ignore_errors: yes
+  tags: [cleanup]
+
+- name: Видалити старі Cinema Club образи
+  command: docker rmi {{ item }}
+  loop: "{{ old_images.stdout_lines }}"
+  when: old_images.stdout_lines is defined and old_images.stdout_lines | length > 0
+  ignore_errors: yes
+  tags: [cleanup]
+
+# Крок 6: Перевірка запуску
+- name: Очікування запуску додатку
+  wait_for:
+    port: "{{ app_port }}"
+    delay: 5
+    timeout: 60
+  tags: [deploy]
+
+- name: Відображення статусу
+  debug:
+    msg: "✅ Cinema Club успішно розгорнуто і доступний на порту {{ app_port }}"
+  tags: [deploy]

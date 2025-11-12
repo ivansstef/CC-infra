@@ -1,0 +1,15 @@
+---
+# Playbook для налаштування інфраструктури
+# Відповідає тільки за системні налаштування, НЕ деплоїть додаток
+
+- name: Setup Infrastructure
+  hosts: cinema
+  become: yes
+  gather_facts: no
+  
+  vars:
+    # Змінні проекту
+    app_dir: /opt/cinema-club
+    
+  roles:
+    - infrastructure
