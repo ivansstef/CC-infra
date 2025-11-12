@@ -104,12 +104,16 @@ jobs:
           script: |
             # Cleanup old images (keep latest + 3 last versions)
             echo "🧹 Cleaning up old Cinema Club images..."
-            OLD_IMAGES=$(docker images ivansstef/cinemaclub --format "{{.Repository}}:{{.Tag}}" | grep -v "latest" | tail -n +4)
-            if [ ! -z "$OLD_IMAGES" ]; then
-              echo "$OLD_IMAGES" | xargs -r docker rmi || true
+            
+            # Get all cinemaclub image IDs except the latest (first in list)
+            OLD_IMAGE_IDS=$(docker images ivansstef/cinemaclub --format "{{.ID}}" | tail -n +4)
+            
+            if [ ! -z "$OLD_IMAGE_IDS" ]; then
+              echo "Removing old images:"
+              echo "$OLD_IMAGE_IDS" | xargs -r docker rmi -f || true
               echo "✅ Old images removed"
             else
-              echo "ℹ️ No old images to remove"
+              echo "ℹ️ No old images to remove (keeping 3 latest)"
             fi
       
       - name: Verify deployment
