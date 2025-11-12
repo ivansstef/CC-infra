@@ -4,6 +4,7 @@
 - name: Deploy Cinema Club Application
   hosts: cinema
   become: yes
+  gather_facts: no
   
   vars:
     # Змінні проекту
