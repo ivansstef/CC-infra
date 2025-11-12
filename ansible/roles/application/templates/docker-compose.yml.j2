@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  cinema-club:
+    image: ivansstef/cinemaclub:{{ docker_image_tag | default('latest') }}
+    container_name: {{ app_name }}
+    ports:
+      - "{{ app_port }}:80"
+    restart: unless-stopped
+    networks:
+      - cinema-network
+
+networks:
+  cinema-network:
+    driver: bridge
