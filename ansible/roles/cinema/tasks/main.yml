@@ -1,0 +1,110 @@
+---
+# Основні завдання для розгортання Cinema Club
+
+# Крок 1: Оновлення системи
+- name: Оновлення кешу пакетів apt
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  tags: [system]
+
+- name: Оновлення всіх пакетів
+  apt:
+    upgrade: dist
+  tags: [system]
+
+# Крок 2: Встановлення залежностей
+- name: Встановлення необхідних пакетів
+  apt:
+    name:
+      - git
+      - python3
+      - python3-pip
+      - docker.io
+      - docker-compose
+      - curl
+      - ca-certificates
+    state: present
+  tags: [dependencies]
+
+- name: Додавання користувача до групи docker
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+  tags: [dependencies]
+
+# Крок 3: Клонування репозиторію
+- name: Перевірка наявності директорії додатку
+  stat:
+    path: "{{ app_dir }}"
+  register: app_dir_stat
+  tags: [deploy]
+
+- name: Створення директорії для додатку
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    mode: '0755'
+  when: not app_dir_stat.stat.exists
+  tags: [deploy]
+
+- name: Клонування Cinema Club репозиторію
+  git:
+    repo: "{{ repo_url }}"
+    dest: "{{ app_dir }}"
+    version: main
+    force: yes
+  tags: [deploy]
+
+- name: Оновлення CinemaClub репозиторію (git pull)
+  git:
+    repo: "{{ repo_url }}"
+    dest: "{{ app_dir }}"
+    version: main
+    update: yes
+  tags: [deploy, update]
+
+# Крок 4: Налаштування Docker Compose
+- name: Копіювання шаблону docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ app_dir }}/docker-compose.yml"
+    mode: '0644'
+  tags: [deploy, config]
+
+# Крок 5: Запуск додатку
+- name: Зупинка старого контейнера cinemaclub (якщо є)
+  command: docker stop cinemaclub
+  ignore_errors: yes
+  tags: [deploy]
+
+- name: Видалення старого контейнера cinemaclub (якщо є)
+  command: docker rm cinemaclub
+  ignore_errors: yes
+  tags: [deploy]
+
+- name: Зупинка існуючих контейнерів (якщо є)
+  command: docker-compose down
+  args:
+    chdir: "{{ app_dir }}"
+  ignore_errors: yes
+  tags: [deploy]
+
+- name: Запуск Cinema Club через Docker Compose
+  command: docker-compose up -d --build
+  args:
+    chdir: "{{ app_dir }}"
+  tags: [deploy]
+
+- name: Очікування запуску додатку
+  wait_for:
+    port: "{{ app_port }}"
+    delay: 5
+    timeout: 60
+  tags: [deploy]
+
+- name: Відображення статусу
+  debug:
+    msg: "Cinema Club успішно розгорнуто і доступний на порту {{ app_port }}"
+  tags: [deploy]

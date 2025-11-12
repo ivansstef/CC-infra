@@ -1,0 +1,56 @@
+# Конфігурація Gitleaks для Cinema Club Infrastructure
+
+title = "Gitleaks config для CC-infra"
+
+# Глобальні налаштування
+[extend]
+# useDefault = true  # Використовувати стандартні правила Gitleaks
+
+# Додаткові правила для виявлення секретів
+[[rules]]
+id = "generic-api-key"
+description = "Виявлення загальних API ключів"
+regex = '''(?i)(api[_-]?key|apikey|api[_-]?secret)["\s:=]+[a-zA-Z0-9_\-]{16,}'''
+tags = ["api", "key"]
+
+[[rules]]
+id = "aws-access-key"
+description = "AWS Access Key"
+regex = '''AKIA[0-9A-Z]{16}'''
+tags = ["aws", "access-key"]
+
+[[rules]]
+id = "private-key"
+description = "Приватний ключ"
+regex = '''-----BEGIN (RSA|DSA|EC|OPENSSH) PRIVATE KEY-----'''
+tags = ["private-key"]
+
+[[rules]]
+id = "github-token"
+description = "GitHub Token"
+regex = '''gh[pousr]_[0-9a-zA-Z]{36}'''
+tags = ["github", "token"]
+
+# Виключення
+[allowlist]
+description = "Дозволені шаблони"
+paths = [
+    '''\.git''',
+    '''README\.md''',
+    '''\.gitleaks\.toml'''
+]
+
+regexes = [
+    '''example\.com''',
+    '''your-server-ip''',
+    '''192\.168\.1\.100''',
+    '''193\.27\.208\.30''',
+    '''203\.0\.113\.''',
+    '''dckr_pat_xxxx''',
+    '''yourusername''',
+    '''yourdockerhubusername''',
+    '''your-test-server''',
+    '''ubuntu@your-server''',
+    '''BEGIN OPENSSH PRIVATE KEY.*END OPENSSH PRIVATE KEY''',
+    '''b3BlbnNzaC1rZXkt'''
+]

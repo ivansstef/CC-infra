@@ -1,0 +1,92 @@
+---
+# Pipeline для автоматичної збірки та деплою додатку Cinema Club
+
+name: Deploy Application
+
+on:
+  # repository_dispatch:
+  #   types: [deploy-app]
+  workflow_dispatch:  # Ручний запуск
+    inputs:
+      environment:
+        description: 'Середовище для деплою'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+  # push:
+  #   branches:
+  #     - feature/github-actions-cicd  # Вимкнено: використовуємо volumes + git pull
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Cinema Club
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Cinema Club repository
+        uses: actions/checkout@v4
+        with:
+          repository: ivansstef/CinemaClub
+          ref: main
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/cinemaclub:latest,${{ secrets.DOCKER_USERNAME }}/cinemaclub:${{ github.sha }}
+      
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            cd /opt/cinema-club
+            docker-compose pull
+            docker-compose up -d --force-recreate
+            docker system prune -f
+      
+      - name: Verify deployment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            cd /opt/cinema-club
+            docker-compose ps
+            
+            # Wait for application to start (max 60 seconds)
+            for i in 1 2 3 4 5 6 7 8 9 10 11 12; do
+              if curl -f http://localhost:8080 > /dev/null 2>&1; then
+                echo "✅ Application is responding!"
+                exit 0
+              fi
+              echo "⏳ Waiting for application... (attempt $i/12)"
+              sleep 5
+            done
+            
+            echo "❌ Application failed to start"
+            exit 1
+      
+      - name: Deployment successful
+        run: |
+          echo "✅ Cinema Club deployed successfully!"
+          echo "🌐 Application available at: http://${{ secrets.SERVER_IP }}:8080"
+          echo "🐳 Docker image: ${{ secrets.DOCKER_USERNAME }}/cinemaclub:${{ github.sha }}"
