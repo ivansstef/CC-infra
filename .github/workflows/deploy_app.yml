@@ -4,8 +4,8 @@
 name: Deploy Application
 
 on:
-  repository_dispatch:
-    types: [deploy-app]
+  # repository_dispatch:
+  #   types: [deploy-app]
   workflow_dispatch:  # Ручний запуск
     inputs:
       environment:

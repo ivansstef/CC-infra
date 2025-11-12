@@ -4,15 +4,15 @@
 name: Deploy Infrastructure
 
 on:
-  push:
-    branches:
-      - main
-      - feature/github-actions-cicd  # Для тестування
-    paths:
-      - 'ansible/**'
-      - '.github/workflows/deploy_infra.yml'
-  repository_dispatch:  # Webhook від CinemaClub
-    types: [update-cinema]
+  # push:
+  #   branches:
+  #     - main
+  #     - feature/github-actions-cicd
+  #   paths:
+  #     - 'ansible/**'
+  #     - '.github/workflows/deploy_infra.yml'
+  # repository_dispatch:  # Webhook від CinemaClub
+  #   types: [update-cinema]
   workflow_dispatch:  # Ручний запуск
     inputs:
       environment:
