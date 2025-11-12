@@ -1,12 +1,6 @@
 ---
 # Основні завдання для розгортання Cinema Club
 
-# Крок 0: Збір facts без sudo
-- name: Gather facts without become
-  setup:
-  become: no
-  tags: [always]
-
 # Крок 1: Оновлення системи
 - name: Оновлення кешу пакетів apt
   apt:
