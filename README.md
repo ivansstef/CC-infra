@@ -132,3 +132,6 @@ ansible-playbook -i inventory.ini deploy.yml
 ## 📧 Контакти
 
 Репозиторій проекту: [CinemaClub](https://github.com/ivansstef/CinemaClub.git)
+
+---
+*Останнє оновлення: Тестування deploy користувача*
