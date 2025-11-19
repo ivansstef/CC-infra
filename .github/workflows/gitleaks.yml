@@ -4,8 +4,6 @@ on:
   pull_request:
   push:
   workflow_dispatch:
-  schedule:
-    - cron: "0 4 * * *" # запуск щодня о 4 ранку
 
 jobs:
   scan:
@@ -16,9 +14,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          args: detect --no-banner --redact --verbose
-          
+      # Запуск через Docker (офіційно рекомендовано)
+      - name: Run gitleaks
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/repo \
+            zricethezav/gitleaks:latest \
+            detect --no-banner --redact --verbose --source=/repo
